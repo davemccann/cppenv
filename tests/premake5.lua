@@ -12,12 +12,12 @@ project "tests"
     }
 
     includedirs {
-        "../os/src",
+        "../cppenv/src",
         "thirdparty/googletest/googletest/include"
     }
 
     links {
-        "os",
+        "cppenv",
         "googletest"
     }
 

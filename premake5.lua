@@ -10,5 +10,5 @@ workspace "MyProject"
     outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
     -- Include subprojects
-    include "os"
+    include "cppenv"
     include "tests"
