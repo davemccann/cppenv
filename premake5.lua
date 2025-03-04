@@ -1,11 +1,12 @@
-workspace "MyProject"
+workspace "CppEnv"
     architecture "x64"
     configurations { "Debug", "Release" }
     startproject "tests"
 
-    -- Force Clang as the compiler
-    toolset "clang"
-    
+    filter "action:gmake"
+        buildoptions { "-MJ compile_commands.json" }
+        toolset "clang"
+
     -- Define the output directory format
     outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 

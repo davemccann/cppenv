@@ -5,6 +5,7 @@ project "tests"
 
     targetdir ("bin/" .. "%{cfg.platform}" .. "%{cfg.buildcfg}")
     objdir ("bin-obj/" .. "%{cfg.platform}" .. "%{cfg.buildcfg}")
+    debugdir ("bin/" .. "%{cfg.platform}" .. "%{cfg.buildcfg}")
 
     files {
         "src/**.h",
@@ -27,23 +28,20 @@ project "tests"
 
     filter { "system:windows", "toolset:clang" }
         defines { "_UNICODE", "UNICODE" }
-
-    filter "configurations:*"
-        symbols "on"
         buildoptions { "-g -gcodeview" }
         linkoptions { "-Wl,/debug" }
         postbuildcommands {
             "py ./../tools/merge_compile_commands.py -p compile_commands.json -d ./.. -o ./../compile_commands.json",
-            "{COPYFILE} %[%{wks.location}/.env] %[bin/%{cfg.platform}/%{cfg.buildcfg}]"
         }
+
+    filter "configurations:*"
+        symbols "on"
+        postbuildcommands { "{COPYFILE} %[%{wks.location}/.env] %[bin/%{cfg.platform}/%{cfg.buildcfg}]" }
 
     filter "configurations:Debug"
         runtime "Debug"
         defines { "DEBUG" }
         optimize "off"
-        buildoptions { "-g -gcodeview" }
-        linkoptions { "-Wl,/debug" }
-
 
     filter "configurations:Release"
         runtime "Release"

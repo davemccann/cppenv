@@ -12,17 +12,20 @@ project "cppenv"
         "src/cppenv.cpp",
     }
 
+    filter "action:gmake"
+        buildoptions { "-MJ compile_commands.json" }
+        toolset "clang"
+
     filter { "system:windows", "toolset:clang" }
         defines { "_UNICODE", "UNICODE" }
+        buildoptions { "-g -gcodeview" }
+        linkoptions { "-Wl,/debug" }
 
     filter "system:windows"
-        toolset "clang"
         files { "src/win32_cppenv.cpp" }
 
     filter "configurations:*"
         symbols "on"
-        buildoptions { "-g -gcodeview" }
-        linkoptions { "-Wl,/debug" }
 
     filter "configurations:Debug"
         runtime "Debug"
