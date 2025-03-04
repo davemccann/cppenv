@@ -1,11 +1,7 @@
 #include "cppenv.h"
 
-#include <cstdio>
-#include <cwchar>
 #include <string>
-#include <string_view>
 #include <system_error>
-#include <wchar.h>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -105,20 +101,20 @@ namespace cppenv
 	}
 
 #else
-	std::string platform_getEnv(const char* name)
+	std::string platform_getEnv(std::string_view name)
 	{
-		DWORD sizeNeeded = GetEnvironmentVariable(name, nullptr, 0);
+		std::string variableName(name);
+
+		DWORD sizeNeeded = GetEnvironmentVariableA(variableName.c_str(), nullptr, 0);
 		if (sizeNeeded <= 0)
 		{
-			printf("failed to get environment - name: %s errorcode: %ld\n", name, GetLastError());
 			return "";
 		}
 
 		std::string buffer(sizeNeeded, '\0');
-		DWORD result = GetEnvironmentVariable(name, buffer.data(), sizeNeeded);
+		DWORD result = GetEnvironmentVariableA(variableName.c_str(), buffer.data(), sizeNeeded);
 		if (result == 0)
 		{
-			printf("failed to get environment - name: %s errorcode: %ld\n", name, GetLastError());
 			return "";
 		}
 
@@ -135,7 +131,7 @@ namespace cppenv
 		const std::string variableName(name);
 		const std::string variableValue(value);
 
-		BOOL result = SetEnvironmentVariable(variableName, variableValue);
+		BOOL result = SetEnvironmentVariableA(variableName.c_str(), variableValue.c_str());
 		if (!result)
 		{
 			return makeErrorCode(Error::SetEnvironmentFailed);
@@ -144,9 +140,10 @@ namespace cppenv
 		return std::error_code();
 	}
 
-	std::error_code platform_unsetEnv(const char* name)
+	std::error_code platform_unsetEnv(std::string_view name)
 	{
-		BOOL result = SetEnvironmentVariable(name, NULL);
+		std::string variableName(name);
+		BOOL result = SetEnvironmentVariableA(variableName.c_str(), NULL);
 		if (!result)
 		{
 			return makeErrorCode(Error::UnsetEnvironmentFailed);

@@ -1,6 +1,5 @@
 #include <filesystem>
 #include <string>
-#include <string_view>
 #include <system_error>
 
 namespace cppenv
@@ -17,8 +16,6 @@ namespace cppenv
 	class ErrorCategory : public std::error_category
 	{
 	  public:
-		ErrorCategory() {}
-
 		const char* name() const noexcept override
 		{
 			return "InvalidArguments";
@@ -34,15 +31,19 @@ namespace cppenv
 					return "failed to set the environment variable";
 				case Error::UnsetEnvironmentFailed:
 					return "failed to unset the environment variable";
+				case Error::ParsingEnvFileFailed:
+					return "failed to parse the environment file";
 				default:
 					return "unknown error";
 			}
 		}
 	};
 
+	constexpr ErrorCategory SomeErrCategory{};
+
 	inline std::error_code makeErrorCode(Error err)
 	{
-		return {static_cast<int>(err), ErrorCategory()};
+		return {static_cast<int>(err), SomeErrCategory};
 	}
 
 	// @brief Sets an environment variables value using the name as the environment variable key
