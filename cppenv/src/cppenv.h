@@ -1,3 +1,5 @@
+#pragma once
+
 #include <filesystem>
 #include <string>
 #include <system_error>
@@ -39,11 +41,10 @@ namespace cppenv
 		}
 	};
 
-	constexpr ErrorCategory SomeErrCategory{};
-
 	inline std::error_code makeErrorCode(Error err)
 	{
-		return {static_cast<int>(err), SomeErrCategory};
+		static ErrorCategory errorCategory;
+		return {static_cast<int>(err), errorCategory};
 	}
 
 	// @brief Sets an environment variables value using the name as the environment variable key
